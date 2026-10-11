@@ -774,23 +774,26 @@ def selftest() -> None:
 _API_URLS = []
 
 def host_ips():
-    """Return all interface IPs (v4 + v6)."""
+    """Return all routable interface IPs (v4 + v6), excluding link-local/APIPA."""
     ips = []
     try:
-        # Try reading /proc/net/fib_trie first (Linux)
-        with open("/proc/net/fib_trie") as f:
-            for line in f:
-                line = line.strip()
-                if "|--" in line:
-                    ip = line.split("|--")[1].strip()
-                    if ip not in ips and ip != "127.0.0.1" and not ip.startswith("127."):
-                        ips.append(ip)
+        import subprocess
+        result = subprocess.run(
+            ["ip", "-o", "addr", "show", "scope", "global"],
+            capture_output=True, text=True, timeout=5
+        )
+        for line in result.stdout.splitlines():
+            parts = line.split()
+            if len(parts) >= 4 and parts[2] in ("inet", "inet6"):
+                addr = parts[3].split("/")[0]
+                if not addr.startswith(("fe80:", "169.254.", "127.")):
+                    ips.append(addr)
     except Exception:
         try:
             hostname = socket.gethostname()
             for iface in socket.getaddrinfo(hostname, None, socket.AF_UNSPEC):
                 ip = iface[4][0]
-                if ip not in ips:
+                if ip not in ips and not ip.startswith(("fe80:", "169.254.", "127.")):
                     ips.append(ip)
         except Exception:
             pass
