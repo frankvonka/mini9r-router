@@ -124,12 +124,11 @@ CLIENT = "desktop"
 BASE62 = string.digits + string.ascii_letters
 
 CHAIN = [
-    "space-bunny-free", "mimo-v2.6-flash-free", "mimo-v2.5-free",
+    "space-bunny-free", "mimo-v2.6-flash-free",
     "muse-spark-1.3-contributor-free", "muse-spark-1.2-contributor-free",
     "longcat-2.5-preview-free", "jev-1.13-free", "ling-3.0-flash-fin-free",
     "nemotron-3-ultra-free", "nemotron-3.5-lightning-free",
-    "deepseek-v4-flash-free", "big-pickle", "fledge-alpha-free",
-    "ling-3.1-flash-free",
+    "big-pickle", "ling-3.1-flash-free",
 ]
 
 QUARTET = [
